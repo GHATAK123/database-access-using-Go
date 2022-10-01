@@ -52,6 +52,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// Get Employee by teamname
+	employee, err := employeeByTeamName("Destination")
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Printf("Employee found: %v\n", employee)
 	// Get Employee by id
 	emp, err := employeeByID(6)
@@ -114,6 +119,28 @@ func employeeByID(id int64) (Employee, error) {
 		return emp, fmt.Errorf("employeeByID %d: %v", id, err)
 	}
 	return emp, nil
+}
+func employeeByTeamName(teamName string) ([]Employee, error) {
+
+	var employee []Employee
+
+	rows, err := db.Query("SELECT * FROM employee WHERE teamName = ?", teamName)
+	if err != nil {
+		return nil, fmt.Errorf("employeeByTeamName %q: %v", teamName, err)
+	}
+	defer rows.Close()
+	// Loop through rows, using Scan to assign column data to struct fields.
+	for rows.Next() {
+		var emp Employee
+		if err := rows.Scan(&emp.ID, &emp.UserName, &emp.FirstName, &emp.LastName, &emp.Sex, &emp.Email, &emp.Designation, &emp.ContactNumber, &emp.DateOfJoining, &emp.BloodGroup, &emp.TeamName, &emp.Home); err != nil {
+			return nil, fmt.Errorf("employeeByUsername %q: %v", teamName, err)
+		}
+		employee = append(employee, emp)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("employeeByUsername %q: %v", teamName, err)
+	}
+	return employee, nil
 }
 
 func addEmployee(emp Employee) (int64, error) {
