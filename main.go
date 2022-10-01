@@ -136,3 +136,25 @@ func addEmployee(emp Employee) (int64, error) {
 	}
 	return id, nil
 }
+func employeeByEmail(Email string) ([]Employee, error) {
+
+	var employee []Employee
+
+	rows, err := db.Query("SELECT * FROM employee WHERE Email = ?", Email)
+	if err != nil {
+		return nil, fmt.Errorf("employeeByEmail %q: %v", Email, err)
+	}
+	defer rows.Close()
+	// Loop through rows, using Scan to assign column data to struct fields.
+	for rows.Next() {
+		var emp Employee
+		if err := rows.Scan(&emp.ID, &emp.Email, &emp.FirstName, &emp.LastName, &emp.Sex, &emp.Email, &emp.Designation, &emp.ContactNumber, &emp.DateOfJoining, &emp.BloodGroup, &emp.TeamName, &emp.Home); err != nil {
+			return nil, fmt.Errorf("employeeByEmail %q: %v", Email, err)
+		}
+		employee = append(employee, emp)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("employeeByEmail %q: %v", Email, err)
+	}
+	return employee, nil
+}
