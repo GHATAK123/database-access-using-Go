@@ -59,11 +59,19 @@ func main() {
 	}
 	fmt.Printf("Employee found: %v\n", employee)
 	// Get Employee by id
-	emp, err := employeeByID(6)
+	emp, err := employeeByID("2020-10-08")
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Printf("Employee found: %v\n", emp)
+	
+	// Get Employee by dateOfJoin
+	emp, err := employeeByDateOfJoining(6)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Employee found: %v\n", emp)
+
 
 	// Insert New Employee
 	empId, err := addEmployee(Employee{
